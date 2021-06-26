@@ -7,7 +7,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-app.use('/api/prueba',require('./routes/prueba.route'))
+app.use('/usuario',require('./routes/prueba.route'))
 
 app.listen(PORT,()=>{
     console.log('Servidor En Puerto',PORT)
