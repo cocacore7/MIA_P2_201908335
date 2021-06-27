@@ -1,6 +1,7 @@
 const db = require('../db/database')
 const oracledb = require('oracledb')
 oracledb.autoCommit = true
+
 const registrar = async (req,res) => {
     let {usu,nom,pass,fot,fech} = req.body
     let connection
@@ -25,16 +26,23 @@ const registrar = async (req,res) => {
 const login = async (req, res) => {
     let {usu,pass} = req.body
     let connection
+    let datos = []
     try {
         connection = await oracledb.getConnection(db)
         let sql = `begin login('${usu}','${pass}',:busqueda); end;`
         let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
         const resultSet = result.outBinds.busqueda;
         let row = await resultSet.getRow();
-        if(row == undefined){console.log("Usuario No Existe O Contraseña Incorrecta")}else{console.log(row);}
+        if(row == undefined){console.log("Usuario No Existe O Contraseña Incorrecta")}else{
+            datos.push(row[0])
+            datos.push(row[1])
+            datos.push(row[3])
+            datos.push(row[4])
+        }
         res.send({
             status:200,
-            data: "Usuario Encontrado"
+            data: "Usuario Encontrado",
+            datos: datos
         })
     } catch (error) {
         console.log(error)
@@ -134,21 +142,24 @@ const crear_publicacion = async (req,res) => {
 const cargar_publicacion = async (req, res) => {
     let {usr_act} = req.body
     let connection
+    let datos = []
     try {
         connection = await oracledb.getConnection(db)
         let sql = `begin cargar_publicacion('${usr_act}',:busqueda); end;`
         let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
         const resultSet = result.outBinds.busqueda;
-        let row;
-        if(resultSet == undefined){console.log("No Existen Publicaciones :O")}
+        let row = await resultSet.getRow();
+        if(row == undefined){console.log("No Existen Publicaciones :O")}
         else{
+            datos.push(row)
             while ((row = await resultSet.getRow())) {
-                console.log(row);
+                datos.push(row)
             }
         }
         res.send({
             status:200,
-            data: "Publicaciones Cargadas"
+            data: "Publicaciones Cargadas",
+            datos: datos
         })
     } catch (error) {
         console.log(error)
@@ -162,21 +173,24 @@ const cargar_publicacion = async (req, res) => {
 const cargar_amigo = async (req, res) => {
     let {usr_act} = req.body
     let connection
+    let datos = []
     try {
         connection = await oracledb.getConnection(db)
         let sql = `begin cargar_amigo('${usr_act}',:busqueda); end;`
         let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
         const resultSet = result.outBinds.busqueda;
-        let row;
-        if(resultSet == undefined){console.log("No Existen Amigos :c")}
+        let row = await resultSet.getRow();
+        if(row == undefined){console.log("No Existen Amigos :c")}
         else{
+            datos.push(row)
             while ((row = await resultSet.getRow())) {
-                console.log(row);
+                datos.push(row)
             }
         }
         res.send({
             status:200,
-            data: "Amigos Cargados"
+            data: "Amigos Cargados",
+            datos: datos
         })
     } catch (error) {
         console.log(error)
@@ -190,22 +204,26 @@ const cargar_amigo = async (req, res) => {
 const cargar_chat = async (req, res) => {
     let {usr_act} = req.body
     let connection
+    let datos = []
     try {
         connection = await oracledb.getConnection(db)
         let sql = `begin cargar_chat('${usr_act}',:busqueda); end;`
         let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
         const resultSet = result.outBinds.busqueda;
-        let row;
-        if(resultSet == undefined){console.log("No Existen Chats :c")}
+        let row = await resultSet.getRow();
+        if(row == undefined){console.log("No Existen Chats :c")}
         else{
+            datos.push(row)
             while ((row = await resultSet.getRow())) {
-                console.log(row);
+                datos.push(row)
             }
         }
         res.send({
             status:200,
-            data: "Chats Cargados"
+            data: "Chats Cargados",
+            datos: datos
         })
+        datos.clear()
     } catch (error) {
         console.log(error)
         res.send({
@@ -214,6 +232,41 @@ const cargar_chat = async (req, res) => {
         })
     }
 }
+
+const cargar_usrs = async (req, res) => {
+    let connection
+    try {
+        connection = await oracledb.getConnection(db)
+        let sql = 'select * from usuario'
+        let result = await connection.execute(sql,[],{ outFormat: oracledb.OUT_FORMAT_OBJECT });
+        res.send({
+            status: 200,
+            data: result.rows
+        })
+    } catch (e) {
+        console.error(e)
+        res.send("Error")
+    }
+
+}
+
+const cargar_solicitudes = async (req, res) => {
+    let connection
+    try {
+        connection = await oracledb.getConnection(db)
+        let sql = 'select * from solicitud'
+        let result = await connection.execute(sql,[],{ outFormat: oracledb.OUT_FORMAT_OBJECT });
+        res.send({
+            status: 200,
+            data: result.rows
+        })
+    } catch (e) {
+        console.error(e)
+        res.send("Error")
+    }
+
+}
+
 
 module.exports = {
     registrar,
@@ -224,5 +277,7 @@ module.exports = {
     crear_publicacion,
     cargar_publicacion,
     cargar_amigo,
-    cargar_chat
+    cargar_chat,
+    cargar_usrs,
+    cargar_solicitudes
 }
