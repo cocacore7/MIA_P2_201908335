@@ -1,13 +1,30 @@
 const db = require('../db/database')
 const oracledb = require('oracledb')
+var path = require('path');
+const Buffer = require('buffer').Buffer;
+const multer = require('multer')
 oracledb.autoCommit = true
-
+var CryptoJS = require("crypto-js");
 const registrar = async (req,res) => {
     let {usu,nom,pass,fot,fech} = req.body
     let connection
+    let contra = CryptoJS.SHA256(pass).toString()
+    let aux = fot.split(',')
+    let base64String = aux[1]
+    var fs = require('fs')
+    var buf = Buffer.from(base64String,'base64');
+
+    fs.writeFile(path.join('./public/Imagenes_Usuarios/',"imagen_"+usu+".jpg"), buf, function(error){
+        if(error){
+            throw error;
+        }else{
+            return true;
+        }
+    });
+    let imagen_oracle = path.join('http://localhost:5000/Imagenes_Usuarios/',"imagen_"+usu+".jpg")
     try {
         connection = await oracledb.getConnection(db)
-        let sql = `begin ingresar_usr('${usu}','${nom}','${pass}','${fot}','${fech}',:estado); end;`
+        let sql = `begin ingresar_usr('${usu}','${nom}','${contra}','${imagen_oracle}','${fech}',:estado); end;`
         let result = await connection.execute(sql,{estado: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }})
         if(result.outBinds.estado == 1){console.log("Usuario Ingresado Con Exito :D")}else{console.log("Usuario Ya Existe :c")}
         res.send({
@@ -27,9 +44,10 @@ const login = async (req, res) => {
     let {usu,pass} = req.body
     let connection
     let datos = []
+    let contra = CryptoJS.SHA256(pass).toString()
     try {
         connection = await oracledb.getConnection(db)
-        let sql = `begin login('${usu}','${pass}',:busqueda); end;`
+        let sql = `begin login('${usu}','${contra}',:busqueda); end;`
         let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
         const resultSet = result.outBinds.busqueda;
         let row = await resultSet.getRow();
@@ -235,13 +253,23 @@ const cargar_chat = async (req, res) => {
 
 const cargar_usrs = async (req, res) => {
     let connection
+    let datos = []
     try {
         connection = await oracledb.getConnection(db)
-        let sql = 'select * from usuario'
-        let result = await connection.execute(sql,[],{ outFormat: oracledb.OUT_FORMAT_OBJECT });
+        let sql = 'begin cargar_Usuarios(:busqueda); end;'
+        let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
+        const resultSet = result.outBinds.busqueda;
+        let row = await resultSet.getRow();
+        if(row == undefined){console.log("No Existen Usuarios :c")}
+        else{
+            datos.push(row)
+            while ((row = await resultSet.getRow())) {
+                datos.push(row)
+            }
+        }
         res.send({
             status: 200,
-            data: result.rows
+            data: datos
         })
     } catch (e) {
         console.error(e)
@@ -252,13 +280,23 @@ const cargar_usrs = async (req, res) => {
 
 const cargar_solicitudes = async (req, res) => {
     let connection
+    let datos = []
     try {
         connection = await oracledb.getConnection(db)
-        let sql = 'select * from solicitud'
-        let result = await connection.execute(sql,[],{ outFormat: oracledb.OUT_FORMAT_OBJECT });
+        let sql = 'begin cargar_Solicitudes(:busqueda); end;'
+        let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
+        const resultSet = result.outBinds.busqueda;
+        let row = await resultSet.getRow();
+        if(row == undefined){console.log("No Existen Usuarios :c")}
+        else{
+            datos.push(row)
+            while ((row = await resultSet.getRow())) {
+                datos.push(row)
+            }
+        }
         res.send({
             status: 200,
-            data: result.rows
+            data: datos
         })
     } catch (e) {
         console.error(e)
