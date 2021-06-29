@@ -1,0 +1,53 @@
+<div class="container">
+    <div class="row">
+        <div class="">
+            <div class="col-12 col-sm-12 col-lg-3">
+                <input type="text" class="form-control" value="" id="usu" name="usu" [(ngModel)]="usu"
+                    placeholder="Ingrese Su Usuario">
+            </div>
+            <div class="col-12 col-sm-12 col-lg-3">
+                <input type="text" class="form-control" value="" id="nom" name="nom" [(ngModel)]="nom"
+                    placeholder="Ingrese Su Nombre Completo">
+            </div>
+            <div class="col-12 col-sm-12 col-lg-3">
+                <input type="password" class="form-control" value="" id="pwd" name="pwd" [(ngModel)]="pwd"
+                    placeholder="Ingresa Su Contraseña">
+            </div>
+            <div class="col-12 col-sm-12 col-lg-3">
+                <input type="password" class="form-control" value="" id="pwdc" name="pwdc" [(ngModel)]="pwdc"
+                    placeholder="Confirmar Contraseña">
+            </div>
+            <div class="col-12 col-sm-12 col-lg-3">
+                <input type="file" accept="image/png,image/jpeg" (change)="handleUpload($event)" class="form-control" value="" id="fot" name="fot" [(ngModel)]="fot"
+                    placeholder="Ingrese Su Fotografia (Opcional)">
+            </div>
+            <div class="col-12 col-sm-12 col-lg-3">
+                <button class="btn btn-secondary " type="button" (click)="registrar_usr()">Registrarse</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <table *ngIf="datos.length > 0" class="table table-hover">
+            <thead class="table-dark">
+                <tr class="text-center">
+                    <th>USUARIO</th>
+                    <th>NOMBRE COMPLETO</th>
+                    <th>FOTO</th>
+                    <th>BOT</th>
+                    <th>FECHA CREACION</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let dato of datos" class="text-center">
+                    <td>{{dato[0]}}</td>
+                    <td>{{dato[1]}}</td> 
+                    <td>{{dato[2]}}</td> 
+                    <td>{{dato[3]}}</td> 
+                    <td>{{dato[4]}}</td> 
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
