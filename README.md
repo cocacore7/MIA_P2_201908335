@@ -109,4 +109,4 @@ El procedure devuelve un valor cursor con los usuarios obtenidas de la consulta.
 El procedure devuelve un valor cursor con las solicitudes obtenidas de la consulta.
 
 ### VERSION DE ORACLE
-[Link](https://github.com/cocacore7/MIA_P2_201908335/blob/main/ER_201908335.png)
+[Link](https://github.com/cocacore7/MIA_P2_201908335/blob/main/Version_Oracle_201908335.PNG)
