@@ -18,6 +18,9 @@ Se manejan las solicitudes de amistad para todos los usuarios, obteniendo las so
 ###### TABLA PUBLICACION
 Se manejan las publicaciones para todos los usuarios, obteniendo las publicaciones de cada usuario y sus amigos por medio de su procedure que se explica mas adelante, obteniendo como llave principal un id de publicacion de tipo entero, con relacion a la tabla usuario de un usuario para muchas publicaciones, por medio de una llave foranea hacia la llave principal de la tabla usuario.
 
+###### TABLA TAG
+Se manejan los tags de las publicaciones para todos los usuarios, obteniendo los tags de cada publicacion por medio de su procedure que se explica mas adelante, obteniendo como llave principal un id de tag de tipo entero, con relacion a la tabla publicacion de un usuario para muchos tags, por medio de una llave foranea hacia la llave principal de la tabla publicacion.
+
 ###### TABLA AMIGO
 Se manejan los amigos para todos los usuarios, obteniendo los amigos de cada usuario por medio de su procedure que se explica mas adelante, obteniendo como llave principal un id de amigo de tipo entero, con relacion a la tabla usuario de un usuario para muchos amigos, por medio de una llave foranea hacia la llave principal de la tabla usuario.
 
@@ -59,8 +62,14 @@ Este endpoint manda una peticion a la base de datos con su consulta respectiva a
 ###### localhost:5000/usuario/crear/publicacion
 Este endpoint manda una peticion a la base de datos con su consulta respectiva al procedure de crear una publicacion que se explica mas adelante, recibiendo parametros json desde el frontend y mandando los datos a la base de datos para realizar la peticion solicitada, retornando los valores de la consulta realizada a la base de datos.
 
+###### localhost:5000/usuario/crear/publicacion/tag
+Este endpoint manda una peticion a la base de datos con su consulta respectiva al procedure de crear un tag que se explica mas adelante, recibiendo parametros json desde el frontend y mandando los datos a la base de datos para realizar la peticion solicitada, retornando los valores de la consulta realizada a la base de datos.
+
 ###### localhost:5000/usuario/cargar/publicacion
 Este endpoint manda una peticion a la base de datos con su consulta respectiva al procedure de cargar publicaciones que se explica mas adelante, recibiendo parametros json desde el frontend y mandando los datos a la base de datos para realizar la peticion solicitada, retornando los valores de la consulta realizada a la base de datos.
+
+###### localhost:5000/usuario/cargar/publicacion/tag
+Este endpoint manda una peticion a la base de datos con su consulta respectiva al procedure de cargar tags que se explica mas adelante, recibiendo parametros json desde el frontend y mandando los datos a la base de datos para realizar la peticion solicitada, retornando los valores de la consulta realizada a la base de datos.
 
 ###### localhost:5000/usuario/cargar/amigo
 Este endpoint manda una peticion a la base de datos con su consulta respectiva al procedure de cargar amigos que se explica mas adelante, recibiendo parametros json desde el frontend y mandando los datos a la base de datos para realizar la peticion solicitada, retornando los valores de la consulta realizada a la base de datos.
@@ -91,10 +100,16 @@ El procedure recibe como parametros el usuario actaul en perfil y el usuario que
 El procedure recibe como parametros la fecha de creacion del usuario proporcionada por el servidor, el usuario actual en sesion y el usuario que se acepta en la solicitud, y devolviendo un valor entero para manejarlo como estado si se realiza correctamente o no la consulta.
 
 ###### crear_publicacion
-El procedure recibe como parametros el contenido de la publicacion, la ruta de la imagen de la publicacion, la fecha de creacion del usuario proporcionada por el servidor y el usuario actual en sesion, devolviendo un valor entero para manejarlo como estado si se realiza correctamente o no la consulta.
+El procedure recibe como parametros el contenido de la publicacion, la ruta de la imagen de la publicacion, la fecha de creacion del usuario proporcionada por el servidor y el usuario actual en sesion, devolviendo un valor cursor con el numero de identificador que se acaba de ingresar.
+
+###### ingresar_tag
+El procedure recibe como parametros el identificador de la publicacion realizada, devolviendo un valor entero como estado para verificar la consulta realizada.
 
 ###### cargar_publicacion
 El procedure recibe como parametros el usuario actual en sesion, devolviendo un valor cursor con las publicaciones obtenidas de la consulta.
+
+###### cargar_tags
+El procedure recibe como parametros el identificador de la publicacion realizada, devolviendo un valor cursor con los tags obtenidos de la consulta.
 
 ###### cargar_amigo
 El procedure recibe como parametros el usuario actual en sesion, devolviendo un valor cursor con los amigos obtenidas de la consulta.
