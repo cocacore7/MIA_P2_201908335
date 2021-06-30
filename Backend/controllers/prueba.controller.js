@@ -139,14 +139,44 @@ const acep_solicitud = async (req,res) => {
 const crear_publicacion = async (req,res) => {
     let {cont,fot,fech_c,usr_act} = req.body
     let connection
+    let datos = []
     try {
         connection = await oracledb.getConnection(db)
-        let sql = `begin crear_publicacion('${cont}','${fot}','${fech_c}','${usr_act}',:estado); end;`
+        let sql = `begin crear_publicacion('${cont}','${fot}','${fech_c}','${usr_act}',:busqueda); end;`
+        let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
+        const resultSet = result.outBinds.busqueda;
+        let row = await resultSet.getRow();
+        if(row == undefined){console.log("No Existen Publicaciones :O")}
+        else{
+            datos.push(row)
+            while ((row = await resultSet.getRow())) {
+                datos.push(row)
+            }
+        }res.send({
+            status:200,
+            data: "Publicacion Creada",
+            datos: datos
+        })
+    } catch (error) {
+        console.log(error)
+        res.send({
+            status: 400,
+            data: error
+        })
+    }
+}
+
+const crear_publicacion_tag = async (req,res) => {
+    let {cont,ident} = req.body
+    let connection
+    try {
+        connection = await oracledb.getConnection(db)
+        let sql = `begin ingresar_tag('${cont}','${ident}',:estado); end;`
         let result = await connection.execute(sql,{estado: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }})
-        if(result.outBinds.estado == 1){console.log("Publicacion Creada Con Exito :D")}else{console.log("Error, No Se Creo La Publicacion")}
+        if(result.outBinds.estado == 1){console.log("Tag Creado Con Exito :D")}else{console.log("Tag No Se Creo :c")}
         res.send({
             status:200,
-            data: "Publicacion Creada"
+            data: "Tag Creada"
         })
     } catch (error) {
         console.log(error)
@@ -177,6 +207,37 @@ const cargar_publicacion = async (req, res) => {
         res.send({
             status:200,
             data: "Publicaciones Cargadas",
+            datos: datos
+        })
+    } catch (error) {
+        console.log(error)
+        res.send({
+            status: 400,
+            data: error
+        })
+    }
+}
+
+const cargar_publicacion_tag = async (req, res) => {
+    let {ident} = req.body
+    let connection
+    let datos = []
+    try {
+        connection = await oracledb.getConnection(db)
+        let sql = `begin cargar_tags('${ident}',:busqueda); end;`
+        let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
+        const resultSet = result.outBinds.busqueda;
+        let row = await resultSet.getRow();
+        if(row == undefined){console.log("No Existen Tags Para Esta Publicacion :O")}
+        else{
+            datos.push(row)
+            while ((row = await resultSet.getRow())) {
+                datos.push(row)
+            }
+        }
+        res.send({
+            status:200,
+            data: "Tags Cargados",
             datos: datos
         })
     } catch (error) {
@@ -317,5 +378,7 @@ module.exports = {
     cargar_amigo,
     cargar_chat,
     cargar_usrs,
-    cargar_solicitudes
+    cargar_solicitudes,
+    crear_publicacion_tag,
+    cargar_publicacion_tag
 }

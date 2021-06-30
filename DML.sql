@@ -155,10 +155,17 @@ BEGIN
     end if;
 END;
 /*PUBLICACIONES*/
-CREATE OR REPLACE PROCEDURE crear_publicacion(cont in varchar2, fot in varchar2, fech_c in date, usr_act in varchar2, estado out number)
+CREATE OR REPLACE PROCEDURE crear_publicacion(cont in varchar2, fot in varchar2, fech_c in date, usr_act in varchar2, busqueda out SYS_REFCURSOR)
 as
 begin
     insert into PUBLICACION(CONTENIDO,IMAGEN,FECHA,USR) values(cont,fot,fech_c,usr_act);
+    open busqueda for select max(id_publicacion) from publicacion;
+end;
+/*TAG PUBLICACION*/
+CREATE OR REPLACE PROCEDURE ingresar_tag(cont in varchar2, ident number, estado out number)
+as
+begin
+    insert into tag_p(CONT_TAG,ID_PUBLICACION) values(cont,ident);
     estado := '1';
 end;
 /*CARGAR PUBLICACIONES PARA PERFIL*/
@@ -183,6 +190,14 @@ begin
             select t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
             where t.usr = usr_act;
     end if;
+end;
+/*CARGAR TAGS DE PUBLICACION*/
+CREATE OR REPLACE PROCEDURE cargar_tags(ident in number, busqueda out SYS_REFCURSOR)
+as
+begin
+    open busqueda for 
+        select t.* from tag_p t
+        where t.id_publicacion=ident;
 end;
 /*CARGAR AMIGOS PARA PERFIL*/
 CREATE OR REPLACE PROCEDURE cargar_amigo(usr_act in varchar2, busqueda out SYS_REFCURSOR)

@@ -1,8 +1,48 @@
-<div class="container">
-    <div class="col-12 col-sm-12 col-lg-3">
-        <button class="btn btn-secondary " type="button" class="nav-link active" [routerLink]="'/registro'">Registrarse</button>
+<br/><br/>
+<form>
+    <div class="form-container sign-in-container">
+        <form action="#">
+            <h1>Iniciar Sesion</h1>
+            <input type="text" class="form-control" value="" id="usu" name="usu" [(ngModel)]="usu2" placeholder="Ingrese Su Usuario">
+            <input type="password" class="form-control" value="" id="pwd" name="pwd" [(ngModel)]="pwd2" placeholder="Ingresa Su Contraseña">
+            <button class="btn btn-secondary " type="button" (click)="login_usr()" [routerLink]="'/perfil'">Enviar</button>
+        </form>
+    </div>  
+    <br/><br/>
+    <div class="form-container sign-up-container">
+        <form action="#">
+            <h1>Registrarse</h1>
+            <input type="text" class="form-control" value="" id="usu2" name="usu2" [(ngModel)]="usu" placeholder="Ingrese Su Usuario">
+            <input type="text" class="form-control" value="" id="nom" name="nom" [(ngModel)]="nom" placeholder="Ingrese Su Nombre Completo">
+            <input type="password" class="form-control" value="" id="pwd2" name="pwd2" [(ngModel)]="pwd" placeholder="Ingresa Su Contraseña">
+            <input type="password" class="form-control" value="" id="pwdc" name="pwdc" [(ngModel)]="pwdc" placeholder="Confirmar Contraseña">
+            <input type="file" accept="image/png,image/jpeg" (change)="handleUpload($event)" class="form-control" value="" id="fot" name="fot" [(ngModel)]="fot"
+                    placeholder="Ingrese Su Fotografia (Opcional)">
+            <button class="btn btn-secondary " type="button" (click)="registrar_usr()">Registrarse</button>
+        </form>
     </div>
-    <div class="col-12 col-sm-12 col-lg-3">
-        <button class="btn btn-secondary " type="button" class="nav-link active" [routerLink]="'/login'">Ingresar Sesion</button>
+    <br/><br/>
+    <div class="row">
+        <table *ngIf="datos.length > 0" class="table table-hover">
+            <thead class="table-dark">
+                <tr class="text-center">
+                    <th>USUARIO</th>
+                    <th>NOMBRE COMPLETO</th>
+                    <th>FOTO</th>
+                    <th>BOT</th>
+                    <th>FECHA CREACION</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let dato of datos" class="text-center">
+                    <td>{{dato[0]}}</td>
+                    <td>{{dato[1]}}</td> 
+                    <td>{{dato[2]}}</td> 
+                    <td>{{dato[3]}}</td> 
+                    <td>{{dato[4]}}</td> 
+                </tr>
+            </tbody>
+        </table>
     </div>
-</div>
+    
+</form>
