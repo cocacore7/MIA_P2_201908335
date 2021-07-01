@@ -2,7 +2,6 @@ const db = require('../db/database')
 const oracledb = require('oracledb')
 var path = require('path');
 const Buffer = require('buffer').Buffer;
-const multer = require('multer')
 oracledb.autoCommit = true
 var CryptoJS = require("crypto-js");
 const registrar = async (req,res) => {
@@ -92,48 +91,31 @@ const crear_solicitud = async (req,res) => {
     }
 }
 
-const elim_solicitud = async (req,res) => {
-    let {usr_act,usr_rech} = req.body
+const cargar_usrs = async (req, res) => {
     let connection
+    let datos = []
     try {
         connection = await oracledb.getConnection(db)
-        let sql = `begin elim_solicitud('${usr_act}','${usr_rech}',:estado); end;`
-        let result = await connection.execute(sql,{estado: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }})
-        if(result.outBinds.estado == 1){console.log("Solicitud Eliminada Con Exito :D")}else{console.log("Solicitud No Se Elimino, No Existe El Usuario :c")}
+        let sql = 'begin cargar_Usuarios(:busqueda); end;'
+        let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
+        const resultSet = result.outBinds.busqueda;
+        let row = await resultSet.getRow();
+        if(row == undefined){console.log("No Existen Usuarios :c")}
+        else{
+            datos.push(row)
+            while ((row = await resultSet.getRow())) {
+                datos.push(row)
+            }
+        }
         res.send({
-            status:200,
-            data: "Solicitud Eliminada"
+            status: 200,
+            data: datos
         })
-    } catch (error) {
-        console.log(error)
-        res.send({
-            status: 400,
-            data: error
-        })
+    } catch (e) {
+        console.error(e)
+        res.send("Error")
     }
-}
 
-const acep_solicitud = async (req,res) => {
-    let {fech_c,usr_act,usr_acept} = req.body
-    let connection
-    try {
-        connection = await oracledb.getConnection(db)
-        let sql = `begin acep_solicitud('${fech_c}','${usr_act}','${usr_acept}',:estado); end;`
-        let result = await connection.execute(sql,{estado: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }})
-        if(result.outBinds.estado == 1){console.log("Solicitud Aceptada Con Exito :D")}
-        else if(result.outBinds.estado == 2){console.log("Solicitud Eliminada Al Aceptar, El Usuario Ya Era Un Amigo -_-")}
-        else{console.log("Solicitud No Se Acepto, No Existe El Usuario :c")}
-        res.send({
-            status:200,
-            data: "Solicitud Aceptada"
-        })
-    } catch (error) {
-        console.log(error)
-        res.send({
-            status: 400,
-            data: error
-        })
-    }
 }
 
 const crear_publicacion = async (req,res) => {
@@ -219,6 +201,37 @@ const cargar_publicacion = async (req, res) => {
 }
 
 const cargar_publicacion_tag = async (req, res) => {
+    let {usr_act,tag_pu} = req.body
+    let connection
+    let datos = []
+    try {
+        connection = await oracledb.getConnection(db)
+        let sql = `begin cargar_publicacion_tag('${usr_act}','${tag_pu}',:busqueda); end;`
+        let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
+        const resultSet = result.outBinds.busqueda;
+        let row = await resultSet.getRow();
+        if(row == undefined){console.log("No Existen Publicaciones con este tag :O")}
+        else{
+            datos.push(row)
+            while ((row = await resultSet.getRow())) {
+                datos.push(row)
+            }
+        }
+        res.send({
+            status:200,
+            data: "Publicaciones para tag solicitado Cargados",
+            datos: datos
+        })
+    } catch (error) {
+        console.log(error)
+        res.send({
+            status: 400,
+            data: error
+        })
+    }
+}
+
+const cargar_tags = async (req, res) => {
     let {ident} = req.body
     let connection
     let datos = []
@@ -247,6 +260,79 @@ const cargar_publicacion_tag = async (req, res) => {
             data: error
         })
     }
+}
+
+const elim_solicitud = async (req,res) => {
+    let {usr_act,usr_rech} = req.body
+    let connection
+    try {
+        connection = await oracledb.getConnection(db)
+        let sql = `begin elim_solicitud('${usr_act}','${usr_rech}',:estado); end;`
+        let result = await connection.execute(sql,{estado: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }})
+        if(result.outBinds.estado == 1){console.log("Solicitud Eliminada Con Exito :D")}else{console.log("Solicitud No Se Elimino, No Existe El Usuario :c")}
+        res.send({
+            status:200,
+            data: "Solicitud Eliminada"
+        })
+    } catch (error) {
+        console.log(error)
+        res.send({
+            status: 400,
+            data: error
+        })
+    }
+}
+
+const acep_solicitud = async (req,res) => {
+    let {fech_c,usr_act,usr_acept} = req.body
+    let connection
+    try {
+        connection = await oracledb.getConnection(db)
+        let sql = `begin acep_solicitud('${fech_c}','${usr_act}','${usr_acept}',:estado); end;`
+        let result = await connection.execute(sql,{estado: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }})
+        if(result.outBinds.estado == 1){console.log("Solicitud Aceptada Con Exito :D")}
+        else if(result.outBinds.estado == 2){console.log("Solicitud Eliminada Al Aceptar, El Usuario Ya Era Un Amigo -_-")}
+        else{console.log("Solicitud No Se Acepto, No Existe El Usuario :c")}
+        res.send({
+            status:200,
+            data: "Solicitud Aceptada"
+        })
+    } catch (error) {
+        console.log(error)
+        res.send({
+            status: 400,
+            data: error
+        })
+    }
+}
+
+const cargar_solicitudes = async (req, res) => {
+    let {usr_soli} = req.body
+    let connection
+    let datos = []
+    try {
+        connection = await oracledb.getConnection(db)
+        let sql = `begin cargar_Solicitudes('${usr_soli}',:busqueda); end;`
+        let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
+        const resultSet = result.outBinds.busqueda;
+        let row = await resultSet.getRow();
+        if(row == undefined){console.log("No Existen Solicitudes De Amistad :c")}
+        else{
+            datos.push(row)
+            while ((row = await resultSet.getRow())) {
+                datos.push(row)
+            }
+        }
+        res.send({
+            status: 200,
+            data: "Solicitudes De Amistad Cargadas",
+            datos: datos
+        })
+    } catch (e) {
+        console.error(e)
+        res.send("Error")
+    }
+
 }
 
 const cargar_amigo = async (req, res) => {
@@ -312,73 +398,24 @@ const cargar_chat = async (req, res) => {
     }
 }
 
-const cargar_usrs = async (req, res) => {
-    let connection
-    let datos = []
-    try {
-        connection = await oracledb.getConnection(db)
-        let sql = 'begin cargar_Usuarios(:busqueda); end;'
-        let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
-        const resultSet = result.outBinds.busqueda;
-        let row = await resultSet.getRow();
-        if(row == undefined){console.log("No Existen Usuarios :c")}
-        else{
-            datos.push(row)
-            while ((row = await resultSet.getRow())) {
-                datos.push(row)
-            }
-        }
-        res.send({
-            status: 200,
-            data: datos
-        })
-    } catch (e) {
-        console.error(e)
-        res.send("Error")
-    }
-
-}
-
-const cargar_solicitudes = async (req, res) => {
-    let connection
-    let datos = []
-    try {
-        connection = await oracledb.getConnection(db)
-        let sql = 'begin cargar_Solicitudes(:busqueda); end;'
-        let result = await connection.execute(sql,{busqueda: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }})
-        const resultSet = result.outBinds.busqueda;
-        let row = await resultSet.getRow();
-        if(row == undefined){console.log("No Existen Usuarios :c")}
-        else{
-            datos.push(row)
-            while ((row = await resultSet.getRow())) {
-                datos.push(row)
-            }
-        }
-        res.send({
-            status: 200,
-            data: datos
-        })
-    } catch (e) {
-        console.error(e)
-        res.send("Error")
-    }
-
-}
-
 
 module.exports = {
     registrar,
     login,
+    cargar_usrs,
+
+    crear_publicacion,
+    cargar_publicacion,
+    crear_publicacion_tag,
+    cargar_publicacion_tag,
+    cargar_tags,
+
     crear_solicitud,
     elim_solicitud,
     acep_solicitud,
-    crear_publicacion,
-    cargar_publicacion,
-    cargar_amigo,
-    cargar_chat,
-    cargar_usrs,
     cargar_solicitudes,
-    crear_publicacion_tag,
-    cargar_publicacion_tag
+
+    cargar_amigo,
+
+    cargar_chat
 }

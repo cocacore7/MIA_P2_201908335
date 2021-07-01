@@ -27,6 +27,85 @@ BEGIN
         select t.* from usuario t
         where t.usr=usu and t.pwd=pass;
 END;
+/*CARGAR Usuarios Existentes*/
+CREATE OR REPLACE PROCEDURE cargar_Usuarios(busqueda out SYS_REFCURSOR)
+as
+begin
+    open busqueda for 
+        select USR,NOMBRE_C,FOTO,BOT,FECHA_C from usuario;
+end;
+
+/*PUBLICACIONES*/
+CREATE OR REPLACE PROCEDURE crear_publicacion(cont in varchar2, fot in varchar2, fech_c in date, usr_act in varchar2, busqueda out SYS_REFCURSOR)
+as
+begin
+    insert into PUBLICACION(CONTENIDO,IMAGEN,FECHA,USR) values(cont,fot,fech_c,usr_act);
+    open busqueda for select max(id_publicacion) from publicacion;
+end;
+/*TAG PUBLICACION*/
+CREATE OR REPLACE PROCEDURE ingresar_tag(cont in varchar2, ident number, estado out number)
+as
+begin
+    insert into tag_p(CONT_TAG,ID_PUBLICACION) values(cont,ident);
+    estado := '1';
+end;
+/*CARGAR PUBLICACIONES PARA PERFIL*/
+CREATE OR REPLACE PROCEDURE cargar_publicacion(usr_act in varchar2, busqueda out SYS_REFCURSOR)
+as
+e_amigo varchar2(100);
+cursor c1 is
+     SELECT a.usr
+     FROM amigo a
+     WHERE a.usr = usr_act;
+begin
+    open c1;
+    fetch c1 into e_amigo;
+    close c1;
+    if e_amigo = usr_act then
+        open busqueda for 
+            select DISTINCT t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
+            inner join amigo a on a.usr=usr_act
+            where t.usr = a.usr_amigo or t.usr = usr_act;
+    else
+        open busqueda for 
+            select t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
+            where t.usr = usr_act;
+    end if;
+end;
+/*CARGAR PUBLICACIONES POR TAG*/
+CREATE OR REPLACE PROCEDURE cargar_publicacion_tag(usr_act in varchar2, tag_pu in varchar2, busqueda out SYS_REFCURSOR)
+as
+e_amigo varchar2(100);
+cursor c1 is
+     SELECT a.usr
+     FROM amigo a
+     WHERE a.usr = usr_act;
+begin
+    open c1;
+    fetch c1 into e_amigo;
+    close c1;
+    if e_amigo = usr_act then
+        open busqueda for 
+            select DISTINCT t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
+            inner join amigo a on a.usr=usr_act
+            inner join TAG_p tp on tp.ID_PUBLICACION = t.ID_PUBLICACION
+            where (t.usr = a.usr_amigo or t.usr = usr_act) and tp.CONT_TAG = tag_pu;
+    else
+        open busqueda for 
+            select t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
+            inner join TAG_p tp on tp.ID_PUBLICACION = t.ID_PUBLICACION
+            where t.usr = usr_act and tp.CONT_TAG = tag_pu;
+    end if;
+end;
+/*CARGAR TAGS DE PUBLICACION*/
+CREATE OR REPLACE PROCEDURE cargar_tags(ident in number, busqueda out SYS_REFCURSOR)
+as
+begin
+    open busqueda for 
+        select t.* from tag_p t
+        where t.id_publicacion=ident;
+end;
+
 /*CREAR SOLICITUD DE AMISTAD*/
 CREATE OR REPLACE PROCEDURE crear_solicitud(fech_c in date, estado in varchar2, usr_sol in varchar2, usr_pet in varchar2, est_cs out number)
 as
@@ -154,76 +233,15 @@ BEGIN
         estado := '0';
     end if;
 END;
-/*PUBLICACIONES*/
-CREATE OR REPLACE PROCEDURE crear_publicacion(cont in varchar2, fot in varchar2, fech_c in date, usr_act in varchar2, busqueda out SYS_REFCURSOR)
-as
-begin
-    insert into PUBLICACION(CONTENIDO,IMAGEN,FECHA,USR) values(cont,fot,fech_c,usr_act);
-    open busqueda for select max(id_publicacion) from publicacion;
-end;
-/*TAG PUBLICACION*/
-CREATE OR REPLACE PROCEDURE ingresar_tag(cont in varchar2, ident number, estado out number)
-as
-begin
-    insert into tag_p(CONT_TAG,ID_PUBLICACION) values(cont,ident);
-    estado := '1';
-end;
-/*CARGAR PUBLICACIONES PARA PERFIL*/
-CREATE OR REPLACE PROCEDURE cargar_publicacion(usr_act in varchar2, busqueda out SYS_REFCURSOR)
-as
-e_amigo varchar2(100);
-cursor c1 is
-     SELECT a.usr
-     FROM amigo a
-     WHERE a.usr = usr_act;
-begin
-    open c1;
-    fetch c1 into e_amigo;
-    close c1;
-    if e_amigo = usr_act then
-        open busqueda for 
-            select DISTINCT t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
-            inner join amigo a on a.usr=usr_act
-            where t.usr = a.usr_amigo or t.usr = usr_act;
-    else
-        open busqueda for 
-            select t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
-            where t.usr = usr_act;
-    end if;
-end;
-/*CARGAR PUBLICACIONES POR TAG*/
-CREATE OR REPLACE PROCEDURE cargar_publicacion_tag(usr_act in varchar2, tag_pu in varchar2, busqueda out SYS_REFCURSOR)
-as
-e_amigo varchar2(100);
-cursor c1 is
-     SELECT a.usr
-     FROM amigo a
-     WHERE a.usr = usr_act;
-begin
-    open c1;
-    fetch c1 into e_amigo;
-    close c1;
-    if e_amigo = usr_act then
-        open busqueda for 
-            select DISTINCT t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
-            inner join amigo a on a.usr=usr_act
-            inner join TAG_p tp on tp.ID_PUBLICACION = t.ID_PUBLICACION
-            where (t.usr = a.usr_amigo or t.usr = usr_act) and tp.CONT_TAG = tag_pu;
-    else
-        open busqueda for 
-            select t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
-            inner join TAG_p tp on tp.ID_PUBLICACION = t.ID_PUBLICACION
-            where t.usr = usr_act and tp.CONT_TAG = tag_pu;
-    end if;
-end;
-/*CARGAR TAGS DE PUBLICACION*/
-CREATE OR REPLACE PROCEDURE cargar_tags(ident in number, busqueda out SYS_REFCURSOR)
+/*CARGAR Solicitudes Existentes*/
+CREATE OR REPLACE PROCEDURE cargar_Solicitudes(usr_soli in varchar2, busqueda out SYS_REFCURSOR)
 as
 begin
     open busqueda for 
-        select t.* from tag_p t
-        where t.id_publicacion=ident;
+        select FECHA_CREACION,ESTADO,usr,usr_sol from Solicitud s
+        where s.usr_sol=usr_soli;
 end;
+
 /*CARGAR AMIGOS PARA PERFIL*/
 CREATE OR REPLACE PROCEDURE cargar_amigo(usr_act in varchar2, busqueda out SYS_REFCURSOR)
 as
@@ -232,6 +250,7 @@ begin
         select t.* from AMIGO t
         where t.usr=usr_act;
 end;
+
 /*CARGAR CHATS PARA PERFIL*/
 CREATE OR REPLACE PROCEDURE cargar_chat(usr_act in varchar2, busqueda out SYS_REFCURSOR)
 as
@@ -239,18 +258,4 @@ begin
     open busqueda for 
         select t.* from CHAT t
         where t.usr=usr_act;
-end;
-/*CARGAR Usuarios Existentes*/
-CREATE OR REPLACE PROCEDURE cargar_Usuarios(busqueda out SYS_REFCURSOR)
-as
-begin
-    open busqueda for 
-        select USR,NOMBRE_C,FOTO,BOT,FECHA_C from usuario;
-end;
-/*CARGAR Solicitudes Existentes*/
-CREATE OR REPLACE PROCEDURE cargar_Solicitudes(busqueda out SYS_REFCURSOR)
-as
-begin
-    open busqueda for 
-        select FECHA_CREACION,ESTADO,usr,usr_sol from Solicitud;
 end;
