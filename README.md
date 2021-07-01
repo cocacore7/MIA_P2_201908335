@@ -108,6 +108,9 @@ El procedure recibe como parametros el identificador de la publicacion realizada
 ###### cargar_publicacion
 El procedure recibe como parametros el usuario actual en sesion, devolviendo un valor cursor con las publicaciones obtenidas de la consulta.
 
+###### cargar_publicacion_tag
+El procedure recibe como parametros el usuario actual en sesion, y el tag a buscar, devolviendo un valor cursor con las publicaciones obtenidas de la consulta.
+
 ###### cargar_tags
 El procedure recibe como parametros el identificador de la publicacion realizada, devolviendo un valor cursor con los tags obtenidos de la consulta.
 
