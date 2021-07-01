@@ -191,6 +191,31 @@ begin
             where t.usr = usr_act;
     end if;
 end;
+/*CARGAR PUBLICACIONES POR TAG*/
+CREATE OR REPLACE PROCEDURE cargar_publicacion(usr_act in varchar2, tag_pu in varchar2, busqueda out SYS_REFCURSOR)
+as
+e_amigo varchar2(100);
+cursor c1 is
+     SELECT a.usr
+     FROM amigo a
+     WHERE a.usr = usr_act;
+begin
+    open c1;
+    fetch c1 into e_amigo;
+    close c1;
+    if e_amigo = usr_act then
+        open busqueda for 
+            select DISTINCT t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
+            inner join amigo a on a.usr=usr_act
+            inner join TAG_p tp on tp.ID_PUBLICACION = t.ID_PUBLICACION
+            where (t.usr = a.usr_amigo or t.usr = usr_act) and tp.CONT_TAG = tag_pu;
+    else
+        open busqueda for 
+            select t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
+            inner join TAG_p tp on tp.ID_PUBLICACION = t.ID_PUBLICACION
+            where t.usr = usr_act and tp.CONT_TAG = tag_pu;
+    end if;
+end;
 /*CARGAR TAGS DE PUBLICACION*/
 CREATE OR REPLACE PROCEDURE cargar_tags(ident in number, busqueda out SYS_REFCURSOR)
 as
