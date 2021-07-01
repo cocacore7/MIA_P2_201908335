@@ -192,7 +192,7 @@ begin
     end if;
 end;
 /*CARGAR PUBLICACIONES POR TAG*/
-CREATE OR REPLACE PROCEDURE cargar_publicacion(usr_act in varchar2, tag_pu in varchar2, busqueda out SYS_REFCURSOR)
+CREATE OR REPLACE PROCEDURE cargar_publicacion_tag(usr_act in varchar2, tag_pu in varchar2, busqueda out SYS_REFCURSOR)
 as
 e_amigo varchar2(100);
 cursor c1 is
