@@ -1,5 +1,147 @@
-<div class="container">
-    <div class="col-12 col-sm-12 col-lg-3">
-        <button class="btn btn-secondary " type="button" class="nav-link active" [routerLink]="'/'">Cerrar Sesion</button>
-    </div>
+<div class="d-flex">
+    <ul ngbNav #nav="ngbNav" class="nav-pills" orientation="vertical">
+        <li ngbNavItem="Crear_Publicacion" class="opcion">
+            <a ngbNavLink (click)="crear_public()">Crear Publicacion</a>
+            <ng-template ngbNavContent >
+                <div class="row">
+                    <label for="typeahead-basic">Contenido:</label><br/>
+                    <input type="text" class="form-control" id="contenido" name="contenido" [(ngModel)]="contenido" />
+                    <label for="typeahead-basic">Imagen:</label><br/>
+                    <input type="file" accept="image/png,image/jpeg" (change)="handleUpload($event)" class="form-control" id="imagen" name="imagen" [(ngModel)]="imagen">
+                    <button class="btn btn-secondary " type="button" (click)="crear_public()">Publicar</button>
+                </div>
+            </ng-template>
+        </li>
+        <li ngbNavItem="Publicaciones" class="opcion">
+            <a ngbNavLink (click)="cargar_public()">Publicaciones</a>
+            <ng-template ngbNavContent >
+                <div class="row">
+                    <div class="card" style="width: 100%;" *ngFor="let dato of datos2">
+                        <div class="card-body">
+                            <h5 class="card-title">{{dato}}</h5>
+                            <p class="card-text">{{dato}}</p>
+                        </div>
+                        <img class="card-img-top" src={{imagen}} alt="Card image cap">
+                        <div class="card-body">
+                            <p class="card-text">{{dato}}</p>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </li>
+        <li ngbNavItem="Solicitudes" class="opcion">
+            <a ngbNavLink (click)="cargar_solicitudes()">Solicitudes</a>
+            <ng-template ngbNavContent>
+                <div class="row">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr class="text-center">
+                                <th>FECHA DE CREACION</th>
+                                <th>ESTADO</th>
+                                <th>USUARIO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let dato of datos" class="text-center">
+                                <td>{{dato[0]}}</td>
+                                <td>{{dato[1]}}</td>
+                                <td>{{dato[2]}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-template>
+        </li>
+        <li ngbNavItem="Amigos" class="opcion">
+            <a ngbNavLink  (click)="cargar_amigo()">Amigos</a>
+            <ng-template ngbNavContent>
+                <div class="row">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr class="text-center">
+                                <th>NOMBRE</th>
+                                <th>FOTO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let dato of datos" class="text-center">
+                                <td>{{dato[0]}}</td>
+                                <td>{{dato[1]}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-template>
+        </li>
+        <li ngbNavItem="Chats" class="opcion">
+            <a ngbNavLink (click)="cargar_chat()">Chats</a>
+            <ng-template ngbNavContent>
+                <div class="row">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr class="text-center">
+                                <th>ID CHAT</th>
+                                <th>FECHA CREACION</th>
+                                <th>USUARIO AMIGO</th>
+                                <th>USUARIO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let dato of datos" class="text-center">
+                                <td>{{dato[0]}}</td>
+                                <td>{{dato[1]}}</td>
+                                <td>{{dato[2]}}</td>
+                                <td>{{dato[3]}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-template>
+        </li>
+        <li ngbNavItem="Buscar_Amigos" class="opcion">
+            <a ngbNavLink (click)="cargar_noamigo()">Buscar Amigos</a>
+            <ng-template ngbNavContent>
+                <div class="row">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr class="text-center">
+                                <th>USUARIO</th>
+                                <th>FOTO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let dato of datos" class="text-center">
+                                <td>{{dato[0]}}</td>
+                                <td>{{dato[1]}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-template>
+        </li>
+        <li ngbNavItem="cargar_public_tag" class="opcion">
+            <a ngbNavLink (click)="cargar_noamigo()">Filtrar Publicaciones</a>
+            <ng-template ngbNavContent>
+                <div class="row">
+
+                </div>
+            </ng-template>
+        </li>
+        <li ngbNavItem="Perfil" class="opcion">
+            <a ngbNavLink>Perfil</a>
+            <ng-template ngbNavContent>
+                <div class="row">
+                    <p>Usuario</p><br/>
+                    <p>Fotografia</p><br/>
+                    <p>Botografia</p><br/>
+                    <p>Fecha Creacion</p>
+                </div>
+            </ng-template>
+        </li>
+        <li ngbNavItem="Cerrar_Sesion" class="salir">
+            <a ngbNavLink [routerLink]="'/'">Cerrar Sesion</a>
+        </li>
+    </ul>
+
+    <div [ngbNavOutlet]="nav" class="ml-4"></div>
 </div>

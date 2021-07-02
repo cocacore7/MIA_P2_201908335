@@ -106,6 +106,14 @@ begin
         where t.id_publicacion=ident;
 end;
 
+/*CARGAR MAXIMO ID DE PUBLICACION*/
+CREATE OR REPLACE PROCEDURE obtener_id_max(busqueda out SYS_REFCURSOR)
+as
+begin
+    open busqueda for 
+        select max(t.id_publicacion) from publicacion t;
+end;
+
 /*CREAR SOLICITUD DE AMISTAD*/
 CREATE OR REPLACE PROCEDURE crear_solicitud(fech_c in date, estado in varchar2, usr_sol in varchar2, usr_pet in varchar2, est_cs out number)
 as
@@ -251,6 +259,30 @@ begin
         where t.usr=usr_act;
 end;
 
+/*CARGAR USUARIO NO AMIGOS*/
+CREATE OR REPLACE PROCEDURE cargar_noamigo(usr_act in varchar2, busqueda out SYS_REFCURSOR)
+as
+e_amigo varchar2(100);
+cursor c1 is
+     SELECT a.usr
+     FROM amigo a
+     WHERE a.usr = usr_act;
+begin
+open c1;
+    fetch c1 into e_amigo;
+    close c1;
+    if e_amigo = usr_act then
+        open busqueda for 
+            select DISTINCT t.USR,T.FOTO from USUARIO t
+            inner join amigo a on a.usr=usr_act
+            where t.usr <> a.usr_amigo or t.usr <> usr_act;
+    else
+        open busqueda for 
+            select t.USR,T.FOTO from USUARIO t
+            where t.usr<>usr_act;
+    end if;
+end;
+
 /*CARGAR CHATS PARA PERFIL*/
 CREATE OR REPLACE PROCEDURE cargar_chat(usr_act in varchar2, busqueda out SYS_REFCURSOR)
 as
@@ -259,3 +291,4 @@ begin
         select t.* from CHAT t
         where t.usr=usr_act;
 end;
+

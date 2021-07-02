@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 
 import { PaginaPComponent } from './components/pagina-p/pagina-p.component';
 import { PerfilComponent } from './components/perfil/perfil.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { PerfilComponent } from './components/perfil/perfil.component';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
+    NgbModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

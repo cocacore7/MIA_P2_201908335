@@ -38,6 +38,8 @@ export class PaginaPComponent implements OnInit {
         console.error(res.data)
         return
       }
+      console.log(res.datos)
+      this.usuarioService.Usuario = res.datos
       this.cargar_usrs()
       this.usu2 = ''
       this.pwd2 = ''

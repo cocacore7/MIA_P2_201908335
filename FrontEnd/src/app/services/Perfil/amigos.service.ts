@@ -13,4 +13,9 @@ export class AmigosService {
   cargar_amigo(usr_act:any) {
     return this.http.post(`${this.URL}/cargar/amigo`, usr_act);
   }
+
+  cargar_noamigo(usr_act:any) {
+    return this.http.post(`${this.URL}/cargar/noamigo`, usr_act);
+  }
+
 }
