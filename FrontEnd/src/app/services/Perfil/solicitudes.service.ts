@@ -23,6 +23,6 @@ export class SolicitudesService {
   }
 
   cargar_solicitudes(usr_act:any) {
-    return this.http.post(`${this.URL}/cargar/publicacion/tag`,usr_act);
+    return this.http.post(`${this.URL}/cargar/solicitudes`,usr_act);
   }
 }

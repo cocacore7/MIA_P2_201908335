@@ -38,7 +38,6 @@ export class PaginaPComponent implements OnInit {
         console.error(res.data)
         return
       }
-      console.log(res.datos)
       this.usuarioService.Usuario = res.datos
       this.cargar_usrs()
       this.usu2 = ''
@@ -64,7 +63,6 @@ export class PaginaPComponent implements OnInit {
           console.error(res.data)
           return
         }
-        console.log(res.data)
         this.cargar_usrs()
         this.usu = ''
         this.nom = ''

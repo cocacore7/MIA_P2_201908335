@@ -105,7 +105,6 @@ begin
         select t.* from tag_p t
         where t.id_publicacion=ident;
 end;
-
 /*CARGAR MAXIMO ID DE PUBLICACION*/
 CREATE OR REPLACE PROCEDURE obtener_id_max(busqueda out SYS_REFCURSOR)
 as
@@ -115,7 +114,7 @@ begin
 end;
 
 /*CREAR SOLICITUD DE AMISTAD*/
-CREATE OR REPLACE PROCEDURE crear_solicitud(fech_c in date, estado in varchar2, usr_sol in varchar2, usr_pet in varchar2, est_cs out number)
+CREATE OR REPLACE PROCEDURE crear_solicitud(fech_c in date, estado in varchar2, usr_sol in varchar2, usr_pet in varchar2,foto_a in varchar2, est_cs out number)
 as
 usr1 varchar2(100) := NULL;
 usr2 varchar2(100) := NULL;
@@ -137,7 +136,7 @@ begin
     close c2;
     if usr1 = usr_pet then
         if usr2 = usr_sol then
-            insert into solicitud(FECHA_CREACION,ESTADO,USR_SOL,USR) values(fech_c,estado,usr_sol,usr_pet);
+            insert into solicitud(FECHA_CREACION,ESTADO,USR_SOL,FOTO,USR) values(fech_c,estado,usr_sol,foto_a,usr_pet);
             est_cs := '1';
         else
             est_cs := '0';
@@ -230,8 +229,8 @@ BEGIN
                 delete from solicitud where usr_sol = usr_act and usr=usr_acept;
                 insert into amigo(USR_AMIGO,FOTO_AMIGO,USR) values (usr_acept,foto_amigo,usr_act);
                 insert into amigo(USR_AMIGO,FOTO_AMIGO,USR) values (usr_act,foto_act,usr_acept);
-                insert into chat(FECHA_CREACION,USR_AMIGO,USR) values (fech_c,usr_act,usr_acept);
-                insert into chat(FECHA_CREACION,USR_AMIGO,USR) values (fech_c,usr_acept,usr_act);
+                insert into chat(FECHA_CREACION,USR_AMIGO,FOTO,USR) values (fech_c,usr_act,foto_act,usr_acept);
+                insert into chat(FECHA_CREACION,USR_AMIGO,FOTO,USR) values (fech_c,usr_acept,foto_amigo,usr_act);
                 estado := '1';
             end if;
         else
@@ -246,7 +245,7 @@ CREATE OR REPLACE PROCEDURE cargar_Solicitudes(usr_soli in varchar2, busqueda ou
 as
 begin
     open busqueda for 
-        select FECHA_CREACION,ESTADO,usr,usr_sol from Solicitud s
+        select FECHA_CREACION,ESTADO,usr,usr_sol,FOTO from Solicitud s
         where s.usr_sol=usr_soli;
 end;
 
@@ -275,7 +274,7 @@ open c1;
         open busqueda for 
             select DISTINCT t.USR,T.FOTO from USUARIO t
             inner join amigo a on a.usr=usr_act
-            where t.usr <> a.usr_amigo or t.usr <> usr_act;
+            where t.usr <> a.usr_amigo and t.usr <> usr_act;
     else
         open busqueda for 
             select t.USR,T.FOTO from USUARIO t
@@ -291,4 +290,3 @@ begin
         select t.* from CHAT t
         where t.usr=usr_act;
 end;
-

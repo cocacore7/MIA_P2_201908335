@@ -13,12 +13,16 @@ let reader = new FileReader();
 })
 export class PerfilComponent implements OnInit {
   contenido = ''
-  imagen = 'http:/localhost:5000/Imagenes_Publicaciones/imagen_2.jpg'
+  imagen = 'http://localhost:5000/Imagenes_Publicaciones/imagen_2.jpg'
   tags = ''
   tag_rec = ''
   usr_solicitado = ''
   usr_rech=''
   usr_acept = ''
+  usuario = ''
+  nombre = ''
+  foto = ''
+  bot = ''
   datos= []
 
   constructor(private PublicacionService: PublicacionService,private SolicitudesService: SolicitudesService,
@@ -104,13 +108,12 @@ export class PerfilComponent implements OnInit {
         console.error(res.data)
         return
       }
-      /*for (let i = 0; i < res.datos.length; i++) {
+      for (let i = 0; i < res.datos.length; i++) {
         if(res.datos[i][2] != null){
           let separar = res.datos[i][2].split("\\")
           res.datos[i][2] = separar[separar.length - 1]
         }
-        console.log(res.datos[i][2])
-      }*/
+      }
       this.datos = res.datos
       this.contenido = ''
       this.imagen = ''
@@ -163,14 +166,16 @@ export class PerfilComponent implements OnInit {
     })
   }
 
-  crear_solicitud() {
+  crear_solicitud(usuario_sol:any) {
     var date = new Date();
     let fecha = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear()
     let usr = this.UsuarioService.Usuario[0]
+    let f = this.UsuarioService.Usuario[2].split("\\")
     let data = {
       fech_c: fecha,
       estado: "pendiente",
-      usr_sol: this.usr_solicitado,
+      usr_sol: usuario_sol,
+      foto_a: f[f.length -1],
       usr_pet: usr
     }
     this.SolicitudesService.crear_solicitud(data).subscribe((res: any) => {
@@ -178,17 +183,17 @@ export class PerfilComponent implements OnInit {
         console.error(res.data)
         return
       }
-      this.cargar_solicitudes()
     }, (err: any) => {
       console.error(err)
     })
   }
 
-  elim_solicitud() {
+  elim_solicitud(usuario_rech:any) {
     let usr = this.UsuarioService.Usuario[0]
+    console.log(usuario_rech)
     let data = {
       usr_act: usr,
-      usr_rech: this.usr_rech
+      usr_rech: usuario_rech
     }
     this.SolicitudesService.elim_solicitud(data).subscribe((res: any) => {
       if (res.status === 400) {
@@ -201,14 +206,15 @@ export class PerfilComponent implements OnInit {
     })
   }
 
-  acept_solicitud() {
+  acept_solicitud(usuario_acept:any) {
     var date = new Date();
     let fecha = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear()
     let usr = this.UsuarioService.Usuario[0]
+    console.log(usuario_acept)
     let data = {
       fech_c: fecha,
       usr_act: usr,
-      usr_acept: this.usr_acept
+      usr_acept: usuario_acept
     }
     this.SolicitudesService.acep_solicitud(data).subscribe((res: any) => {
       if (res.status === 400) {
@@ -251,6 +257,12 @@ export class PerfilComponent implements OnInit {
         console.error(res.data)
         return
       }
+      for (let i = 0; i < res.datos.length; i++) {
+        if(res.datos[i][2] != null){
+          let separar = res.datos[i][2].split("\\")
+          res.datos[i][2] = separar[separar.length - 1]
+        }
+      }
       this.datos = res.datos
     }, (err: any) => {
       console.error(err)
@@ -266,6 +278,12 @@ export class PerfilComponent implements OnInit {
       if (res.status === 400) {
         console.error(res.data)
         return
+      }
+      for (let i = 0; i < res.datos.length; i++) {
+        if(res.datos[i][3] != null){
+          let separar = res.datos[i][3].split("\\")
+          res.datos[i][3] = separar[separar.length - 1]
+        }
       }
       this.datos = res.datos
     }, (err: any) => {
@@ -283,10 +301,24 @@ export class PerfilComponent implements OnInit {
         console.error(res.data)
         return
       }
+      for (let i = 0; i < res.datos.length; i++) {
+        if(res.datos[i][1] != null){
+          let separar = res.datos[i][1].split("\\")
+          res.datos[i][1] = separar[separar.length - 1]
+        }
+      }
       this.datos = res.datos
     }, (err: any) => {
       console.error(err)
     })
+  }
+
+  cargar_perfil(){
+    this.usuario = this.UsuarioService.Usuario[0]
+    this.nombre = this.UsuarioService.Usuario[1]
+    let f = this.UsuarioService.Usuario[2].split("\\")
+    this.foto = f[f.length -1]
+    this.bot = this.UsuarioService.Usuario[3]
   }
 
 }

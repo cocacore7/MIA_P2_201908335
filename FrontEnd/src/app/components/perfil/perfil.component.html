@@ -8,20 +8,20 @@
                     <input type="text" class="form-control" value="" id="contenido" name="contenido" [(ngModel)]="contenido" />
                     <label for="typeahead-basic">Imagen:</label><br/>
                     <input type="file" accept="image/png,image/jpeg" value="" (change)="handleUpload($event)" class="form-control" id="imagen" name="imagen" [(ngModel)]="imagen">
-                    <button class="btn btn-secondary " type="button" (click)="crear_public()">Publicar</button>
+                    <button class="btn btn-secondary " type="button" style="background-color: green;" (click)="crear_public()">Publicar</button>
                 </div>
             </ng-template>
         </li>
         <li ngbNavItem="Publicaciones" class="opcion">
             <a ngbNavLink (click)="cargar_public()">Publicaciones</a>
             <ng-template ngbNavContent >
-                <div class="row">
+                <div class="row" *ngIf="datos.length > 0">
                     <div class="card" style="width: 100%;" *ngFor="let dato of datos">
                         <div class="card-body">
                             <h5 class="card-title">{{dato[0]}}</h5>
                             <p class="card-text">{{dato[1]}}</p>
                         </div>
-                        <img class="card-img-top" src="{{imagen}}" alt="Imagen">
+                            <img class="card-img-top" src="http:\\localhost:5000\Imagenes_Publicaciones\{{dato[2]}}" alt="Imagen">
                         <div class="card-body">
                             <p class="card-text">{{dato[3]}}</p>
                         </div>
@@ -32,90 +32,61 @@
         <li ngbNavItem="Solicitudes" class="opcion">
             <a ngbNavLink (click)="cargar_solicitudes()">Solicitudes</a>
             <ng-template ngbNavContent>
-                <div class="row">
-                    <table class="table table-hover">
-                        <thead class="table-dark">
-                            <tr class="text-center">
-                                <th>FECHA DE CREACION</th>
-                                <th>ESTADO</th>
-                                <th>USUARIO</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let dato of datos" class="text-center">
-                                <td>{{dato[0]}}</td>
-                                <td>{{dato[1]}}</td>
-                                <td>{{dato[2]}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="row" *ngIf="datos.length > 0">
+                    <div class="card" style="width: 40%;" *ngFor="let dato of datos">
+                        <div class="card-body">
+                            <h5 class="card-title">{{dato[2]}}</h5>
+                        </div>
+                        <img class="card-img-top" src="http:\\localhost:5000\Imagenes_Usuarios\{{dato[4]}}" alt="Imagen">
+                        <div class="card-body">
+                            <p class="card-title">Estado: {{dato[1]}}</p>
+                            <p class="card-title">FECHA: {{dato[0]}}</p>
+                        </div>
+                        <button class="btn btn-secondary " type="button" style="background-color: green;" (click)="acept_solicitud(dato[2])">Aceptar</button><br/>
+                        <button class="btn btn-secondary " type="button" style="background-color:orangered;" (click)="elim_solicitud(dato[2])">Rechazar</button><br/>
+                    </div>
                 </div>
             </ng-template>
         </li>
         <li ngbNavItem="Amigos" class="opcion">
             <a ngbNavLink  (click)="cargar_amigo()">Amigos</a>
             <ng-template ngbNavContent>
-                <div class="row">
-                    <table class="table table-hover">
-                        <thead class="table-dark">
-                            <tr class="text-center">
-                                <th>NOMBRE</th>
-                                <th>FOTO</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let dato of datos" class="text-center">
-                                <td>{{dato[0]}}</td>
-                                <td>{{dato[1]}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="row" *ngIf="datos.length > 0">
+                    <div class="card" style="width: 40%;" *ngFor="let dato of datos">
+                        <div class="card-body">
+                            <h5 class="card-title">{{dato[1]}}</h5>
+                        </div>
+                        <img class="card-img-top" src="http:\\localhost:5000\Imagenes_Usuarios\{{dato[2]}}" alt="Imagen"><br/>
+                    </div>
                 </div>
             </ng-template>
         </li>
         <li ngbNavItem="Chats" class="opcion">
             <a ngbNavLink (click)="cargar_chat()">Chats</a>
             <ng-template ngbNavContent>
-                <div class="row">
-                    <table class="table table-hover">
-                        <thead class="table-dark">
-                            <tr class="text-center">
-                                <th>ID CHAT</th>
-                                <th>FECHA CREACION</th>
-                                <th>USUARIO AMIGO</th>
-                                <th>USUARIO</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let dato of datos" class="text-center">
-                                <td>{{dato[0]}}</td>
-                                <td>{{dato[1]}}</td>
-                                <td>{{dato[2]}}</td>
-                                <td>{{dato[3]}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="card" style="width: 40%;" *ngFor="let dato of datos">
+                    <div class="card-body">
+                        <h5 class="card-title">{{dato[2]}}</h5>
+                    </div>
+                    <img class="card-img-top" src="http:\\localhost:5000\Imagenes_Usuarios\{{dato[3]}}" alt="Imagen">
+                    <div class="card-body">
+                        <p class="card-title">FECHA: {{dato[1]}}</p>
+                    </div>
+                    <button class="btn btn-secondary " type="button" style="background-color: green;">Abrir Chat</button><br/>
                 </div>
             </ng-template>
         </li>
         <li ngbNavItem="Buscar_Amigos" class="opcion">
             <a ngbNavLink (click)="cargar_noamigo()">Buscar Amigos</a>
             <ng-template ngbNavContent>
-                <div class="row">
-                    <table class="table table-hover">
-                        <thead class="table-dark">
-                            <tr class="text-center">
-                                <th>USUARIO</th>
-                                <th>FOTO</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let dato of datos" class="text-center">
-                                <td>{{dato[0]}}</td>
-                                <td>{{dato[1]}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="row" *ngIf="datos.length > 0">
+                    <div class="card" style="width: 40%;" *ngFor="let dato of datos">
+                        <div class="card-body">
+                            <h5 class="card-title">{{dato[0]}}</h5>
+                        </div>
+                        <img class="card-img-top" src="http:\\localhost:5000\Imagenes_Usuarios\{{dato[1]}}" alt="Imagen">
+                        <button class="btn btn-secondary " type="button" style="background-color: green;" (click)="crear_solicitud(dato[0])">Enviar Solicitud</button>
+                    </div>
                 </div>
             </ng-template>
         </li>
@@ -128,13 +99,19 @@
             </ng-template>
         </li>
         <li ngbNavItem="Perfil" class="opcion">
-            <a ngbNavLink>Perfil</a>
+            <a ngbNavLink (click)="cargar_perfil()">Perfil</a>
             <ng-template ngbNavContent>
                 <div class="row">
-                    <p>Usuario</p><br/>
-                    <p>Fotografia</p><br/>
-                    <p>Botografia</p><br/>
-                    <p>Fecha Creacion</p>
+                    <div class="card" style="width: 50%;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{usuario}}</h5>
+                            <p class="card-text">{{nombre}}</p>
+                        </div>
+                            <img class="card-img-top" src="http:\\localhost:5000\Imagenes_Usuarios\{{foto}}" alt="Imagen">
+                        <div class="card-body">
+                            <p class="card-text">Bot: {{bot}}</p>
+                        </div>
+                    </div>
                 </div>
             </ng-template>
         </li>

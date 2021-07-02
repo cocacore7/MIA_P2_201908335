@@ -210,20 +210,8 @@ const cargar_publicacion = async (req, res) => {
         let row = await resultSet.getRow();
         if(row == undefined){console.log("No Existen Publicaciones :O")}
         else{
-            /*if(row[2] != null){
-                console.log(row[2])
-                var bitmap = fs.(row[2]);
-                let base = new Buffer.from(bitmap).toString('base64')
-                console.log(base)
-            }*/
             datos.push(row)
             while ((row = await resultSet.getRow())) {
-                /*if(row[2] != null){
-                    console.log(row[2])
-                    var bitmap = fs.readFileSync(row[2]);
-                    let base = new Buffer.from(bitmap).toString('base64')
-                    console.log(base)
-                }*/
                 datos.push(row)
             }
         }
@@ -304,11 +292,11 @@ const cargar_tags = async (req, res) => {
 }
 
 const crear_solicitud = async (req,res) => {
-    let {fech_c,estado,usr_sol,usr_pet} = req.body
+    let {fech_c,estado,usr_sol,foto_a,usr_pet} = req.body
     let connection
     try {
         connection = await oracledb.getConnection(db)
-        let sql = `begin crear_solicitud('${fech_c}','${estado}','${usr_sol}','${usr_pet}',:est_cs); end;`
+        let sql = `begin crear_solicitud('${fech_c}','${estado}','${usr_sol}','${usr_pet}','${foto_a}',:est_cs); end;`
         let result = await connection.execute(sql,{est_cs: { type: oracledb.NUMBER, dir: oracledb.BIND_OUT }})
         if(result.outBinds.est_cs == 1){console.log("Solicitud Ingresada Con Exito :D")}else{console.log("Usuario Solicitud No Existe :c")}
         res.send({
@@ -450,7 +438,6 @@ const cargar_chat = async (req, res) => {
             data: "Chats Cargados",
             datos: datos
         })
-        datos.clear()
     } catch (error) {
         console.log(error)
         res.send({
@@ -482,7 +469,6 @@ const cargar_noamigo = async (req, res) => {
             data: "No Amigos Cargados",
             datos: datos
         })
-        datos.clear()
     } catch (error) {
         console.log(error)
         res.send({
