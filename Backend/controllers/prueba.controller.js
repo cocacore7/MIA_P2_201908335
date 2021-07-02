@@ -148,7 +148,7 @@ const crear_publicacion = async (req,res) => {
     }
 }
 
-const crear_publicacion_tag = async (req,res) => {
+const crear_tag = async (req,res) => {
     let {cont,ident} = req.body
     let connection
     try {
@@ -405,8 +405,8 @@ module.exports = {
     cargar_usrs,
 
     crear_publicacion,
+    crear_tag,
     cargar_publicacion,
-    crear_publicacion_tag,
     cargar_publicacion_tag,
     cargar_tags,
 

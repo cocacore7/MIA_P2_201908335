@@ -14,7 +14,7 @@ export class PublicacionService {
     return this.http.post(`${this.URL}/crear/publicacion`, publicacion);
   }
 
-  ingresar_tag(publicacion_tag:any) {
+  crear_tag(publicacion_tag:any) {
     return this.http.post(`${this.URL}/crear/publicacion/tag`, publicacion_tag);
   }
 

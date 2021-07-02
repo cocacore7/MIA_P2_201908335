@@ -15,19 +15,18 @@ export class PaginaPComponent implements OnInit {
   pwd = ''
   pwdc = ''
   fot = ''
-
-  handleUpload(event:any) {
-    const file = event.target.files[0];
-    reader.readAsDataURL(file);
-  }
-
   datos= []
+
   constructor(private registroService: RegistroService,private usuarioService: UsuarioService) { }
 
   ngOnInit(): void {
     this.cargar_usrs()
   }
 
+  handleUpload(event:any) {
+    const file = event.target.files[0];
+    reader.readAsDataURL(file);
+  }
 
   login_usr() {
     let data = {
@@ -39,8 +38,6 @@ export class PaginaPComponent implements OnInit {
         console.error(res.data)
         return
       }
-      console.log(res.data)
-      console.log(res.datos)
       this.cargar_usrs()
       this.usu2 = ''
       this.pwd2 = ''
