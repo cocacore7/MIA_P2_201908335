@@ -13,14 +13,13 @@ let reader = new FileReader();
 })
 export class PerfilComponent implements OnInit {
   contenido = ''
-  imagen = 'http:\localhost:5000\Imagenes_Usuarios\imagen_mcrv208.jpg'
+  imagen = 'http:/localhost:5000/Imagenes_Publicaciones/imagen_2.jpg'
   tags = ''
   tag_rec = ''
   usr_solicitado = ''
   usr_rech=''
   usr_acept = ''
   datos= []
-  datos2 = [1,2,3,4,5]
 
   constructor(private PublicacionService: PublicacionService,private SolicitudesService: SolicitudesService,
     private AmigosService: AmigosService,private ChatsService: ChatsService,private UsuarioService: UsuarioService) { }
@@ -105,11 +104,19 @@ export class PerfilComponent implements OnInit {
         console.error(res.data)
         return
       }
+      /*for (let i = 0; i < res.datos.length; i++) {
+        if(res.datos[i][2] != null){
+          let separar = res.datos[i][2].split("\\")
+          res.datos[i][2] = separar[separar.length - 1]
+        }
+        console.log(res.datos[i][2])
+      }*/
       this.datos = res.datos
       this.contenido = ''
       this.imagen = ''
       this.tags = ''
       this.tag_rec = ''
+
     }, (err: any) => {
       console.error(err)
     })

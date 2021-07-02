@@ -4,6 +4,8 @@ var path = require('path');
 const Buffer = require('buffer').Buffer;
 oracledb.autoCommit = true
 var CryptoJS = require("crypto-js");
+const fs = require('fs');
+var base64 = require('base-64');
 
 const registrar = async (req,res) => {
     let {usu,nom,pass,fot,fech} = req.body
@@ -208,8 +210,20 @@ const cargar_publicacion = async (req, res) => {
         let row = await resultSet.getRow();
         if(row == undefined){console.log("No Existen Publicaciones :O")}
         else{
+            /*if(row[2] != null){
+                console.log(row[2])
+                var bitmap = fs.(row[2]);
+                let base = new Buffer.from(bitmap).toString('base64')
+                console.log(base)
+            }*/
             datos.push(row)
             while ((row = await resultSet.getRow())) {
+                /*if(row[2] != null){
+                    console.log(row[2])
+                    var bitmap = fs.readFileSync(row[2]);
+                    let base = new Buffer.from(bitmap).toString('base64')
+                    console.log(base)
+                }*/
                 datos.push(row)
             }
         }

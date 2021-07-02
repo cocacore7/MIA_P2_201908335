@@ -5,9 +5,9 @@
             <ng-template ngbNavContent >
                 <div class="row">
                     <label for="typeahead-basic">Contenido:</label><br/>
-                    <input type="text" class="form-control" id="contenido" name="contenido" [(ngModel)]="contenido" />
+                    <input type="text" class="form-control" value="" id="contenido" name="contenido" [(ngModel)]="contenido" />
                     <label for="typeahead-basic">Imagen:</label><br/>
-                    <input type="file" accept="image/png,image/jpeg" (change)="handleUpload($event)" class="form-control" id="imagen" name="imagen" [(ngModel)]="imagen">
+                    <input type="file" accept="image/png,image/jpeg" value="" (change)="handleUpload($event)" class="form-control" id="imagen" name="imagen" [(ngModel)]="imagen">
                     <button class="btn btn-secondary " type="button" (click)="crear_public()">Publicar</button>
                 </div>
             </ng-template>
@@ -16,14 +16,14 @@
             <a ngbNavLink (click)="cargar_public()">Publicaciones</a>
             <ng-template ngbNavContent >
                 <div class="row">
-                    <div class="card" style="width: 100%;" *ngFor="let dato of datos2">
+                    <div class="card" style="width: 100%;" *ngFor="let dato of datos">
                         <div class="card-body">
-                            <h5 class="card-title">{{dato}}</h5>
-                            <p class="card-text">{{dato}}</p>
+                            <h5 class="card-title">{{dato[0]}}</h5>
+                            <p class="card-text">{{dato[1]}}</p>
                         </div>
-                        <img class="card-img-top" src={{imagen}} alt="Card image cap">
+                        <img class="card-img-top" src="{{imagen}}" alt="Imagen">
                         <div class="card-body">
-                            <p class="card-text">{{dato}}</p>
+                            <p class="card-text">{{dato[3]}}</p>
                         </div>
                     </div>
                 </div>
