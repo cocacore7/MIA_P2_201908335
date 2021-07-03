@@ -63,12 +63,12 @@ begin
     close c1;
     if e_amigo = usr_act then
         open busqueda for 
-            select DISTINCT t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
+            select DISTINCT t.usr,t.contenido,t.imagen,t.fecha,t.ID_PUBLICACION from PUBLICACION t
             inner join amigo a on a.usr=usr_act
             where t.usr = a.usr_amigo or t.usr = usr_act;
     else
         open busqueda for 
-            select t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
+            select t.usr,t.contenido,t.imagen,t.fecha,t.ID_PUBLICACION from PUBLICACION t
             where t.usr = usr_act;
     end if;
 end;
@@ -86,23 +86,23 @@ begin
     close c1;
     if e_amigo = usr_act then
         open busqueda for 
-            select DISTINCT t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
+            select DISTINCT t.usr,t.contenido,t.imagen,t.fecha,t.ID_PUBLICACION from PUBLICACION t
             inner join amigo a on a.usr=usr_act
             inner join TAG_p tp on tp.ID_PUBLICACION = t.ID_PUBLICACION
             where (t.usr = a.usr_amigo or t.usr = usr_act) and tp.CONT_TAG = tag_pu;
     else
         open busqueda for 
-            select t.usr,t.contenido,t.imagen,t.fecha from PUBLICACION t
+            select t.usr,t.contenido,t.imagen,t.fecha,t.ID_PUBLICACION from PUBLICACION t
             inner join TAG_p tp on tp.ID_PUBLICACION = t.ID_PUBLICACION
             where t.usr = usr_act and tp.CONT_TAG = tag_pu;
     end if;
-end;
+end;        
 /*CARGAR TAGS DE PUBLICACION*/
 CREATE OR REPLACE PROCEDURE cargar_tags(ident in number, busqueda out SYS_REFCURSOR)
 as
 begin
     open busqueda for 
-        select t.* from tag_p t
+        select DISTINCT t.* from tag_p t
         where t.id_publicacion=ident;
 end;
 /*CARGAR MAXIMO ID DE PUBLICACION*/

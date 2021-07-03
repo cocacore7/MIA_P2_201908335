@@ -25,8 +25,4 @@ router.post('/cargar/chat',cargar_chat)
 
 router.post('/cargar/noamigo',cargar_noamigo)
 
-router.get('/Imagenes_Publicaciones/:img', function(req, res){
-    res.sendFile( `imagenes/${img}` );
-}); 
-
 module.exports = router

@@ -8,6 +8,8 @@
                     <input type="text" class="form-control" value="" id="contenido" name="contenido" [(ngModel)]="contenido" />
                     <label for="typeahead-basic">Imagen:</label><br/>
                     <input type="file" accept="image/png,image/jpeg" value="" (change)="handleUpload($event)" class="form-control" id="imagen" name="imagen" [(ngModel)]="imagen">
+                    <label for="typeahead-basic">Tags:</label><br/>
+                    <input type="text" class="form-control" value="" id="tags" name="tags" [(ngModel)]="tags" placeholder="#tag1#tag2 #tag3" />
                     <button class="btn btn-secondary " type="button" style="background-color: green;" (click)="crear_public()">Publicar</button>
                 </div>
             </ng-template>
@@ -20,8 +22,9 @@
                         <div class="card-body">
                             <h5 class="card-title">{{dato[0]}}</h5>
                             <p class="card-text">{{dato[1]}}</p>
+                            <p class="card-text" *ngIf="dato[5] != undefined">{{dato[5]}}</p>
                         </div>
-                            <img class="card-img-top" src="http:\\localhost:5000\Imagenes_Publicaciones\{{dato[2]}}" alt="Imagen">
+                            <img class="card-img-top" *ngIf="dato[2] != undefined" src="http:\\localhost:5000\Imagenes_Publicaciones\{{dato[2]}}" alt="Imagen" >
                         <div class="card-body">
                             <p class="card-text">{{dato[3]}}</p>
                         </div>
@@ -91,10 +94,25 @@
             </ng-template>
         </li>
         <li ngbNavItem="cargar_public_tag" class="opcion">
-            <a ngbNavLink (click)="cargar_noamigo()">Filtrar Publicaciones</a>
+            <a ngbNavLink>Filtrar Publicaciones</a>
             <ng-template ngbNavContent>
                 <div class="row">
-
+                    <label for="typeahead-basic">Tag:</label><br/>
+                    <input type="text" class="form-control" value="" id="tag_rec" name="tag_rec" [(ngModel)]="tag_rec" placeholder="#tag" /><br/>
+                    <button class="btn btn-secondary " type="button" style="background-color: green;" (click)="cargar_public_tag()">Filtrar</button><br/>
+                </div><br/>
+                <div class="row" *ngIf="datos.length > 0">
+                    <div class="card" style="width: 100%;" *ngFor="let dato of datos2">
+                        <div class="card-body">
+                            <h5 class="card-title">{{dato[4]}}</h5>
+                            <p class="card-text">{{dato[1]}}</p>
+                            <p class="card-text" *ngIf="dato[5] != undefined">{{dato[5]}}</p>
+                        </div>
+                            <img class="card-img-top" *ngIf="dato[2] != undefined" src="http:\\localhost:5000\Imagenes_Publicaciones\{{dato[2]}}" alt="Imagen" >
+                        <div class="card-body">
+                            <p class="card-text">{{dato[3]}}</p>
+                        </div>
+                    </div>
                 </div>
             </ng-template>
         </li>
@@ -116,7 +134,7 @@
             </ng-template>
         </li>
         <li ngbNavItem="Cerrar_Sesion" class="salir">
-            <a ngbNavLink [routerLink]="'/'">Cerrar Sesion</a>
+            <button class="btn btn-secondary " type="button" style="background-color:orangered;" (click)="cerrar_sesion()" >Cerrar Sesion</button>
         </li>
     </ul>
 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../../services/Usuario/usuario.service';
 import { RegistroService } from '../../services/Usuario/registro.service';
+import {Router, ActivatedRoute, Params, RouterLink} from "@angular/router";
 const reader = new FileReader();
 @Component({
   selector: 'app-pagina-p',
@@ -17,7 +18,7 @@ export class PaginaPComponent implements OnInit {
   fot = ''
   datos= []
 
-  constructor(private registroService: RegistroService,private usuarioService: UsuarioService) { }
+  constructor(private registroService: RegistroService,private usuarioService: UsuarioService,private _router: Router) { }
 
   ngOnInit(): void {
     this.cargar_usrs()
@@ -38,7 +39,14 @@ export class PaginaPComponent implements OnInit {
         console.error(res.data)
         return
       }
-      this.usuarioService.Usuario = res.datos
+      console.log(res)
+      if(res.datos.length > 0){
+        this.usuarioService.Usuario = res.datos
+        this._router.navigate(['/perfil']);
+      }else{
+        this.usuarioService.Usuario = ""
+        alert("Usuario No Encontrado o Contraseña Incorrecta")
+      }
       this.cargar_usrs()
       this.usu2 = ''
       this.pwd2 = ''

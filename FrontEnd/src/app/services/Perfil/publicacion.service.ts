@@ -27,6 +27,6 @@ export class PublicacionService {
   }
 
   cargar_tags(ident:any) {
-    return this.http.post(`${this.URL}/cargar/tags`,ident);
+    return this.http.post(`${this.URL}/cargar/tag`,ident);
   }
 }
